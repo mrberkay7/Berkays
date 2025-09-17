@@ -1,0 +1,118 @@
+<!doctype html>
+
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>İyi ki Doğdun Hocam 🎉</title>
+  <style>
+    :root{
+      --bg1:#0f172a; --bg2:#0b1220;
+      --accent1:#ff6b6b; --accent2:#ffd166; --accent3:#7ae582;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{
+      background: linear-gradient(180deg,var(--bg1),var(--bg2));
+      overflow:hidden;color:white;
+    }/* büyük, arka plan yazısı alt alta */
+.bg-text{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:0;gap:1rem}
+.bg-text span{
+  font-weight:900;font-size:6vw;opacity:0.08;letter-spacing:0.05em;
+  display:block;white-space:nowrap;text-align:center;
+}
+
+/* merkezdeki kart */
+.card{
+  position:relative;z-index:5;max-width:900px;margin:8vh auto;padding:2rem;border-radius:18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.04);
+  text-align:center;
+}
+
+h1{margin:0;font-size:2.6rem}
+p.lead{margin:0.6rem 0 0;color:rgba(255,255,255,0.85)}
+
+/* düğme */
+.btn{appearance:none;border:0;padding:0.9rem 1.3rem;border-radius:12px;font-weight:700;cursor:pointer;margin-top:1rem}
+.play{background:linear-gradient(90deg,var(--accent1),#ff8fb3);color:#081226}
+
+/* kalpler ve balonlar layer */
+.fx-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.heart, .balloon{position:absolute;will-change:transform;opacity:0.15}
+
+/* kalp şekli */
+.heart{
+  width:60px;height:54px;transform-origin:center bottom;animation:floatUp linear infinite;
+}
+.heart::before,.heart::after{content:'';position:absolute;width:32px;height:54px;border-radius:16px 16px 0 0;background:var(--accent1);top:0}
+.heart::before{left:0;transform:rotate(-45deg)}
+.heart::after{right:0;transform:rotate(45deg)}
+
+/* balon */
+.balloon{width:56px;height:78px;border-radius:50% 50% 50% 50%;background:var(--accent2);transform-origin:center bottom;animation:rise linear infinite}
+.balloon::after{content:'';position:absolute;left:50%;bottom:-20px;width:2px;height:20px;background:rgba(255,255,255,0.2);transform:translateX(-50%)}
+
+@keyframes rise{from{transform:translateY(120vh) scale(0.9) rotate(0deg)} to{transform:translateY(-40vh) scale(1.1) rotate(10deg)}}
+@keyframes floatUp{from{transform:translateY(120vh) rotate(0deg) scale(0.9)} to{transform:translateY(-30vh) rotate(15deg) scale(1.05)}}
+
+.footer{position:fixed;right:18px;bottom:18px;z-index:6;font-size:0.85rem;color:rgba(255,255,255,0.6)}
+
+  </style>
+</head>
+<body>
+  <div class="bg-text" aria-hidden="true">
+    <span>İYİKİ</span>
+    <span>DOĞDUN</span>
+    <span>HOCAM</span>
+  </div>  <div class="fx-layer" id="fxLayer"></div>  <main class="card" role="main">
+    <h1>🎉 İyi ki Doğdun Hocam 🎉</h1>
+    <p class="lead">Bugün sizin gününüz — iyi ki varsınız!</p>
+    <button class="btn play" id="playBtn">🎵 Müziği Aç</button>
+  </main>  <div class="footer">🎂 Kutlama sayfası</div>  <!-- gizli audio (kullanıcı etkileşimi ile çalınır) -->  <audio id="bgAudio" loop preload="none">
+    <source src="https://cdn.pixabay.com/download/audio/2022/02/26/audio_4b2a5b9b8b.mp3?filename=joyful-11239.mp3" type="audio/mpeg">
+  </audio>  <script>
+    const fx = document.getElementById('fxLayer');
+    const playBtn = document.getElementById('playBtn');
+    const audio = document.getElementById('bgAudio');
+
+    // rastgele balon/kalp oluştur
+    function spawnParticle(type){
+      const el = document.createElement('div');
+      el.className = type;
+      const left = Math.random()*100;
+      el.style.left = left + 'vw';
+      el.style.bottom = '-20vh';
+      const colors = ['#ff6b6b','#ff8fb3','#ffd166','#7ae582','#9ad0ff','#c39cff'];
+      const c = colors[Math.floor(Math.random()*colors.length)];
+      el.style.setProperty('--accent1', c);
+      el.style.setProperty('--accent2', c);
+      const dur = Math.random()*10 + 8;
+      el.style.animationDuration = dur + 's';
+      fx.appendChild(el);
+      setTimeout(()=>el.remove(), (dur*1000)+1500);
+    }
+
+    // sürekli üret
+    setInterval(()=>{
+      const r = Math.random();
+      if(r < 0.5) spawnParticle('balloon'); else spawnParticle('heart');
+    }, 800);
+
+    // müzik butonu
+    playBtn.addEventListener('click', async ()=>{
+      try{
+        if(audio.paused){
+          await audio.play();
+          playBtn.textContent = '🔊 Müzik Çalıyor';
+        } else {
+          audio.pause();
+          playBtn.textContent = '🎵 Müziği Aç';
+        }
+      }catch(e){
+        console.warn('Autoplay bloklandı');
+      }
+    });
+  </script></body>
+</html>
